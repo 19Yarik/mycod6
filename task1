@@ -1,0 +1,36 @@
+# Визначення класу для вузлів дерева
+class TreeNode:
+    def __init__(self, val=0, left=None, right=None):
+        self.val = val
+        self.left = left
+        self.right = right
+
+def isSameTree(p: TreeNode, q: TreeNode) -> bool:
+    # Якщо обидва дерева пусті, вони однакові
+    if not p and not q:
+        return True
+    # Якщо одне з дерев пусте, а інше ні, вони не однакові
+    if not p or not q:
+        return False
+    # Якщо значення коренів не однакові, дерева не однакові
+    if p.val != q.val:
+        return False
+    # Рекурсивно перевіряємо ліві та праві піддерева
+    return isSameTree(p.left, q.left) and isSameTree(p.right, q.right)
+
+# Приклади використання функції
+# Створимо дерева з прикладів
+# Приклад 1: p = [1, 2, 3], q = [1, 2, 3]
+p1 = TreeNode(1, TreeNode(2), TreeNode(3))
+q1 = TreeNode(1, TreeNode(2), TreeNode(3))
+print(isSameTree(p1, q1))  # Виведе: True
+
+# Приклад 2: p = [1, 2], q = [1, null, 2]
+p2 = TreeNode(1, TreeNode(2))
+q2 = TreeNode(1, None, TreeNode(2))
+print(isSameTree(p2, q2))  # Виведе: False
+
+# Приклад 3: p = [1, 2, 1], q = [1, 1, 2]
+p3 = TreeNode(1, TreeNode(2), TreeNode(1))
+q3 = TreeNode(1, TreeNode(1), TreeNode(2))
+print(isSameTree(p3, q3))  # Виведе: False
