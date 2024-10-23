@@ -1,0 +1,66 @@
+# Визначення класу для вузлів дерева
+class TreeNode:
+    def __init__(self, val=0, left=None, right=None):
+        self.val = val
+        self.left = left
+        self.right = right
+
+def kthSmallest(root: TreeNode, k: int) -> int:
+    # Список для зберігання елементів у порядку зростання
+    stack = []
+    current = root
+    count = 0
+
+    while stack or current:
+        # Переміщуємося до найлівішого вузла
+        while current:
+            stack.append(current)
+            current = current.left
+        
+        # Витягуємо вузол з верхівки стеку
+        current = stack.pop()
+        count += 1
+        
+        # Якщо ми досягли k-го елемента, повертаємо його значення
+        if count == k:
+            return current.val
+        
+        # Переходимо до правого піддерева
+        current = current.right
+
+# Функція для побудови дерева з масиву (для тестування)
+def buildTree(nodes: list) -> TreeNode:
+    if not nodes:
+        return None
+    
+    from collections import deque
+    
+    root = TreeNode(nodes[0])
+    queue = deque([root])
+    index = 1
+    
+    while index < len(nodes):
+        current = queue.popleft()
+        
+        # Лівий нащадок
+        if nodes[index] is not None:
+            current.left = TreeNode(nodes[index])
+            queue.append(current.left)
+        index += 1
+        
+        # Правий нащадок
+        if index < len(nodes) and nodes[index] is not None:
+            current.right = TreeNode(nodes[index])
+            queue.append(current.right)
+        index += 1
+    
+    return root
+
+# Приклади використання функції
+# Приклад 1: root = [3, 1, 4, null, 2], k = 1
+root1 = buildTree([3, 1, 4, None, 2])
+print(kthSmallest(root1, 1))  # Виведе: 1
+
+# Приклад 2: root = [5, 3, 6, 2, 4, None, None, 1], k = 3
+root2 = buildTree([5, 3, 6, 2, 4, None, None, 1])
+print(kthSmallest(root2, 3))  # Виведе: 3
