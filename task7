@@ -1,0 +1,77 @@
+# Визначення класу для вузлів дерева
+class TreeNode:
+    def __init__(self, val=0, left=None, right=None):
+        self.val = val
+        self.left = left
+        self.right = right
+
+class Solution:
+    def minCameraCover(self, root: TreeNode) -> int:
+        # Статуси:
+        # 0 - вузол не покритий
+        # 1 - вузол покритий камерою
+        # 2 - вузол покритий без камери
+        self.camera_count = 0
+        
+        def dfs(node):
+            if not node:
+                return 2  # Порожній вузол вважається покритим
+
+            left = dfs(node.left)
+            right = dfs(node.right)
+
+            # Якщо один з дочірніх вузлів не покритий
+            if left == 0 or right == 0:
+                self.camera_count += 1  # Установлюємо камеру на цьому вузлі
+                return 1  # Цей вузол тепер має камеру
+
+            # Якщо один з дочірніх вузлів має камеру
+            if left == 1 or right == 1:
+                return 2  # Цей вузол покритий, але без камери
+
+            return 0  # Цей вузол не покритий
+
+        # Викликаємо DFS на корені
+        if dfs(root) == 0:  # Якщо корінь не покритий, потрібно ще одна камера
+            self.camera_count += 1
+
+        return self.camera_count
+
+# Функція для побудови дерева з масиву (для тестування)
+def buildTree(nodes: list) -> TreeNode:
+    if not nodes:
+        return None
+    
+    from collections import deque
+    
+    root = TreeNode(nodes[0])
+    queue = deque([root])
+    index = 1
+    
+    while index < len(nodes):
+        current = queue.popleft()
+        
+        # Лівий нащадок
+        if nodes[index] is not None:
+            current.left = TreeNode(nodes[index])
+            queue.append(current.left)
+        index += 1
+        
+        # Правий нащадок
+        if index < len(nodes) and nodes[index] is not None:
+            current.right = TreeNode(nodes[index])
+            queue.append(current.right)
+        index += 1
+    
+    return root
+
+# Приклади використання функції
+solution = Solution()
+
+# Приклад 1: root = [0, 0, None, 0, 0]
+root1 = buildTree([0, 0, None, 0, 0])
+print(solution.minCameraCover(root1))  # Виведе: 1
+
+# Приклад 2: root = [0, 0, None, 0, None, 0, None, None, 0]
+root2 = buildTree([0, 0, None, 0, None, 0, None, None, 0])
+print(solution.minCameraCover(root2))  # Виведе: 2
