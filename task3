@@ -1,0 +1,67 @@
+# Визначення класу для вузлів дерева
+class TreeNode:
+    def __init__(self, val=0, left=None, right=None):
+        self.val = val
+        self.left = left
+        self.right = right
+
+def invertTree(root: TreeNode) -> TreeNode:
+    # Якщо дерево пусте, повертаємо None
+    if root is None:
+        return None
+    
+    # Інвертуємо ліве та праве піддерева
+    root.left, root.right = root.right, root.left
+    
+    # Рекурсивно інвертуємо ліве та праве піддерева
+    invertTree(root.left)
+    invertTree(root.right)
+    
+    return root
+
+# Функція для виводу дерева у вигляді списку (для перевірки результату)
+def treeToList(root: TreeNode) -> list:
+    if root is None:
+        return []
+    
+    result = []
+    queue = [root]
+    
+    while queue:
+        node = queue.pop(0)
+        if node:
+            result.append(node.val)
+            queue.append(node.left)
+            queue.append(node.right)
+        else:
+            result.append(None)  # Для відображення відсутніх вузлів
+    
+    # Вирізаємо None в кінці списку
+    while result and result[-1] is None:
+        result.pop()
+    
+    return result
+
+# Приклади використання функції
+# Приклад 1: root = [4, 2, 7, 1, 3, 6, 9]
+root1 = TreeNode(4)
+root1.left = TreeNode(2)
+root1.right = TreeNode(7)
+root1.left.left = TreeNode(1)
+root1.left.right = TreeNode(3)
+root1.right.left = TreeNode(6)
+root1.right.right = TreeNode(9)
+inverted_root1 = invertTree(root1)
+print(treeToList(inverted_root1))  # Виведе: [4, 7, 2, 9, 6, 3, 1]
+
+# Приклад 2: root = [2, 1, 3]
+root2 = TreeNode(2)
+root2.left = TreeNode(1)
+root2.right = TreeNode(3)
+inverted_root2 = invertTree(root2)
+print(treeToList(inverted_root2))  # Виведе: [2, 3, 1]
+
+# Приклад 3: root = []
+root3 = None
+inverted_root3 = invertTree(root3)
+print(treeToList(inverted_root3))  # Виведе: []
