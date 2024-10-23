@@ -1,0 +1,75 @@
+# Визначення класу для вузлів дерева
+class TreeNode:
+    def __init__(self, val=0, left=None, right=None):
+        self.val = val
+        self.left = left
+        self.right = right
+
+class Codec:
+    def serialize(self, root: TreeNode) -> str:
+        """Серіалізує дерево в рядок."""
+        def pre_order(node):
+            if not node:
+                return "null,"
+            return str(node.val) + "," + pre_order(node.left) + pre_order(node.right)
+
+        return pre_order(root)
+
+    def deserialize(self, data: str) -> TreeNode:
+        """Десеріалізує рядок назад в дерево."""
+        def build_tree(nodes):
+            val = next(nodes)
+            if val == "null":
+                return None
+            node = TreeNode(int(val))
+            node.left = build_tree(nodes)
+            node.right = build_tree(nodes)
+            return node
+
+        node_values = iter(data.split(","))
+        return build_tree(node_values)
+
+# Функція для побудови дерева з масиву (для тестування)
+def buildTree(nodes: list) -> TreeNode:
+    if not nodes:
+        return None
+    
+    from collections import deque
+    
+    root = TreeNode(nodes[0])
+    queue = deque([root])
+    index = 1
+    
+    while index < len(nodes):
+        current = queue.popleft()
+        
+        # Лівий нащадок
+        if nodes[index] is not None:
+            current.left = TreeNode(nodes[index])
+            queue.append(current.left)
+        index += 1
+        
+        # Правий нащадок
+        if index < len(nodes) and nodes[index] is not None:
+            current.right = TreeNode(nodes[index])
+            queue.append(current.right)
+        index += 1
+    
+    return root
+
+# Приклади використання функції
+codec = Codec()
+
+# Приклад 1: root = [1, 2, 3, null, null, 4, 5]
+root1 = buildTree([1, 2, 3, None, None, 4, 5])
+serialized1 = codec.serialize(root1)
+print(f"Serialized: {serialized1}")  # Виведе серіалізований рядок
+deserialized1 = codec.deserialize(serialized1)
+print(codec.serialize(deserialized1))  # Перевірка десеріалізації
+
+# Приклад 2: root = []
+root2 = buildTree([])
+serialized2 = codec.serialize(root2)
+print(f"Serialized: {serialized2}")  # Виведе: null,
+deserialized2 = codec.deserialize(serialized2)
+print(codec.serialize(deserialized2))  # Перевірка десеріалізації
